@@ -69,7 +69,9 @@ h3{font:700 1.2rem/1.15 var(--font-display);margin:0;text-wrap:balance}
 
 /* chord dictionary */
 .hero{display:flex;align-items:flex-end;gap:14px 18px;flex-wrap:wrap}
-.cname{font:700 clamp(3.2rem,17vw,4.8rem)/.85 var(--font-display);letter-spacing:-.01em;min-width:0}
+.cname{font:700 clamp(2.8rem,14vw,4.4rem)/.85 var(--font-display);letter-spacing:-.01em;min-width:0}
+#v-acordes{gap:14px}
+.pick{display:flex;flex-direction:column;gap:8px}
 .cmeta{display:flex;flex-direction:column;gap:6px;min-width:0;padding-bottom:4px}
 .qn{color:var(--muted);font-size:.95rem}
 .tones{display:flex;gap:6px;flex-wrap:wrap}
@@ -82,7 +84,7 @@ h3{font:700 1.2rem/1.15 var(--font-display);margin:0;text-wrap:balance}
 .fifth.ok{border-style:solid;border-color:var(--pearl)}
 .roots{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
 .chip{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 10px;font-weight:700;white-space:nowrap}
-.roots .chip{padding:9px 0;font-family:var(--font-mono);font-weight:600}
+.roots .chip{padding:7px 0;font-family:var(--font-mono);font-weight:600}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .qrow{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
 .qrow .chip{flex:none;font-family:var(--font-mono);font-weight:600;font-size:.88rem}
@@ -142,7 +144,7 @@ h3{font:700 1.2rem/1.15 var(--font-display);margin:0;text-wrap:balance}
 .pitem[aria-pressed="true"] .pk{background:var(--brass);color:var(--on-brass)}
 
 /* transport + nav */
-.transport{display:flex;align-items:center;gap:10px 14px;padding-block:9px;background:var(--surface);border-top:1px solid var(--line);flex-wrap:wrap}
+.transport{display:flex;align-items:center;gap:12px;padding-block:8px;background:var(--surface);border-top:1px solid var(--line)}
 .playbtn{width:48px;height:48px;border-radius:50%;background:var(--brass);color:var(--on-brass);border:0;display:grid;place-items:center;flex:none}
 .playbtn svg{width:22px;height:22px;fill:currentColor}
 .bpm{display:flex;align-items:center;gap:8px;flex:1 1 180px;min-width:0}
@@ -150,8 +152,9 @@ h3{font:700 1.2rem/1.15 var(--font-display);margin:0;text-wrap:balance}
 .bpm span{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 .bpm input{flex:1;min-width:0;accent-color:var(--brass)}
 .toggles{display:flex;gap:6px}
-.tgl{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 11px;font-size:.78rem;color:var(--muted)}
-.tgl[aria-pressed="true"]{border-color:var(--pearl);color:var(--pearl);font-weight:700}
+.tgl{width:40px;height:40px;border:1px solid var(--line);background:var(--surface);border-radius:50%;display:grid;place-items:center;color:var(--muted);padding:0}
+.tgl svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.tgl[aria-pressed="true"]{border-color:var(--pearl);color:var(--pearl);background:var(--surface-2)}
 .nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--surface);border-top:1px solid var(--line)}
 .nav button{background:none;border:0;padding:8px 0 9px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.72rem;color:var(--muted)}
 .nav button[aria-current="page"]{color:var(--brass);font-weight:700}
@@ -193,14 +196,9 @@ h3{font:700 1.2rem/1.15 var(--font-display);margin:0;text-wrap:balance}
           </div>
         </div>
       </div>
-      <p class="fifth" id="cfifth"></p>
-      <div>
-        <p class="lbl">Tônica</p>
-        <div class="roots" id="roots"></div>
-      </div>
-      <div>
-        <p class="lbl">Tipo</p>
-        <div class="qrow" id="quals"></div>
+      <div class="pick">
+        <div class="roots" id="roots" role="group" aria-label="Tônica"></div>
+        <div class="qrow" id="quals" role="group" aria-label="Tipo de acorde"></div>
       </div>
       <div class="bar">
         <span class="count" id="ccount"></span>
@@ -210,6 +208,7 @@ h3{font:700 1.2rem/1.15 var(--font-display);margin:0;text-wrap:balance}
         </div>
       </div>
       <div class="vgrid" id="vgrid"></div>
+      <p class="fifth" id="cfifth"></p>
       <p class="legend">Toque num diagrama para ouvir. Cordas da esquerda para a direita: 4ª, 3ª, 2ª, 1ª. A 5ª corda fica solta. Os números acima de cada desenho são a casa de cada corda (4ª→1ª).</p>
     </section>
 
@@ -253,8 +252,10 @@ h3{font:700 1.2rem/1.15 var(--font-display);margin:0;text-wrap:balance}
       <input type="range" id="bpm" min="40" max="220" step="2" value="100" aria-label="Andamento em batidas por minuto">
     </div>
     <div class="toggles">
-      <button type="button" class="tgl" id="t-metro" aria-pressed="false">Metrônomo</button>
-      <button type="button" class="tgl" id="t-loop" aria-pressed="true">Repetir</button>
+      <button type="button" class="tgl" id="t-metro" aria-pressed="false" aria-label="Metrônomo" title="Metrônomo">
+        <svg viewBox="0 0 24 24"><path d="M9 3h6l4 18H5z"/><path d="M12 17 16.5 6"/><path d="M7.5 15h9"/></svg></button>
+      <button type="button" class="tgl" id="t-loop" aria-pressed="true" aria-label="Repetir" title="Repetir">
+        <svg viewBox="0 0 24 24"><path d="M17 2.5 20.5 6 17 9.5"/><path d="M3.5 11.5V10a4 4 0 0 1 4-4h13"/><path d="M7 21.5 3.5 18 7 14.5"/><path d="M20.5 12.5V14a4 4 0 0 1-4 4h-13"/></svg></button>
     </div>
   </div>
 
@@ -277,6 +278,8 @@ h3{font:700 1.2rem/1.15 var(--font-display);margin:0;text-wrap:balance}
 var NOTE=['C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
 var NOTE_PT={C:'Dó','C#':'Dó#',D:'Ré',Eb:'Mib',E:'Mi',F:'Fá','F#':'Fá#',G:'Sol',Ab:'Láb',A:'Lá',Bb:'Sib',B:'Si'};
 var IVL={0:'R',1:'b9',2:'9',3:'b3',4:'3',5:'4',6:'b5',7:'5',8:'#5',9:'6',10:'b7',11:'7'};
+var IVNAME={R:'a tônica','b9':'a nona menor','9':'a nona','b3':'a terça menor','3':'a terça','4':'a quarta','b5':'a quinta diminuta',
+  '5':'a quinta','#5':'a quinta aumentada','6':'a sexta','bb7':'a sétima diminuta','b7':'a sétima menor','7':'a sétima maior'};
 // cordas na ordem 4ª, 3ª, 2ª, 1ª (MIDI); s5 = 5ª corda solta
 var TUNINGS={
   openG:  {name:'Sol aberto',          code:'gDGBD',  s5:67, strings:[50,55,59,62]},
@@ -585,8 +588,8 @@ function renderChords(){
   var p5=t.s5%12, iv5=(p5-S.root+12)%12, inC=q.iv.indexOf(iv5)>=0, f5=document.getElementById('cfifth');
   f5.className='fifth'+(inC?' ok':'');
   f5.innerHTML=inC
-    ? '5ª corda solta (<b>'+NOTE[p5]+'</b>) é o '+esc(ivLabel(q,iv5))+' do acorde: pode tocar à vontade.'
-    : '5ª corda solta (<b>'+NOTE[p5]+'</b>) soa como '+esc(IVL[iv5])+', fora do acorde. Evite nos tempos fortes ou suba-a com o capotraste de 5ª corda.';
+    ? '5ª corda solta (<b>'+NOTE[p5]+'</b>) é '+IVNAME[ivLabel(q,iv5)]+' do acorde: pode tocar à vontade.'
+    : '5ª corda solta (<b>'+NOTE[p5]+'</b>) soa como '+IVNAME[IVL[iv5]]+', fora do acorde. Evite nos tempos fortes ou suba-a com o capotraste de 5ª corda.';
   document.querySelectorAll('#roots .chip').forEach(function(b){b.setAttribute('aria-pressed',String(+b.dataset.r===S.root));});
   document.querySelectorAll('#quals .chip').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.q===S.q));});
   document.getElementById('m-nt').setAttribute('aria-pressed',String(S.mode==='nt'));
